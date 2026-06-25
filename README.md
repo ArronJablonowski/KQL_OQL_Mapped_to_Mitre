@@ -91,6 +91,11 @@ The portable HTML includes:
 - MITRE ATT&CK Enterprise matrix coverage
 - Sidebar navigation by tactic
 
+![HTML report overview](https://github.com/ArronJablonowski/KQL_OQL_Mapped_to_Mitre/blob/main/img/img.png?raw=true)
+
+Copy-to-clipboard KQL/OQL queries 
+![HTML report overview](https://github.com/ArronJablonowski/KQL_OQL_Mapped_to_Mitre/blob/main/img/query.png?raw=true)
+
 ## Rebuild The HTML
 
 After editing Markdown tactic files, rebuild the portable HTML:
