@@ -1,0 +1,39 @@
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Python cache and local tooling output
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Obsidian local workspace/state
+.obsidian/
+
+# Editor and IDE state
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+tmp/
+temp/
+
+# Local environment files
+.env
+.env.*
+
+# Archive/export scratch files
+*.zip
+*.tar
+*.tar.gz
+*.tgz
