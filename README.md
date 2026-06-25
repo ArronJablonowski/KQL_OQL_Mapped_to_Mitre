@@ -110,12 +110,14 @@ Baseline detection queries are written in Elastic Kibana Query Language:
 - Windows path patterns escape literal backslashes, for example:
 
 ```kql
-file.path:"C:\\Windows\\System32\\Tasks\\*"
+file.path:C\:\\Windows\\System32\\Tasks\\*
 ```
 
 Elastic KQL is a filtering language. For sequence logic, joins, aggregations, thresholds, and correlation, use Elastic Security rule logic, EQL, ES|QL, threshold rules, new terms rules, or rule exceptions.
 
-Many hunting filters intentionally use leading wildcard patterns such as `process.command_line:"*EncodedCommand*"`. Elastic KQL supports wildcard syntax, but leading wildcard clauses are controlled by Kibana's `query:allowLeadingWildcards` advanced setting. Verify that setting is enabled in the Kibana space where these queries are used; if it is disabled, leading wildcard clauses will not be accepted and must be rewritten as prefix, exact-match, normalized-field, or rule-exception logic.
+Many hunting filters intentionally use leading wildcard patterns such as `process.command_line:*EncodedCommand*`. Elastic KQL supports wildcard syntax, but wildcard terms should not be wrapped in double quotes; quoted values are phrase/literal-style values rather than wildcard terms. Escape spaces and special characters when they appear inside wildcard terms, for example `rule.name:*Command\ and\ Control*` or `process.command_line:*jndi\:*`.
+
+Leading wildcard clauses are controlled by Kibana's `query:allowLeadingWildcards` advanced setting. Verify that setting is enabled in the Kibana space where these queries are used; if it is disabled, leading wildcard clauses will not be accepted and must be rewritten as prefix, exact-match, normalized-field, or rule-exception logic.
 
 Elastic's KQL language reference notes that leading wildcards are disallowed by default for performance reasons, while the current Kibana advanced settings reference lists `query:allowLeadingWildcards` as a boolean setting with a default of `true`. Treat this as an environment compatibility check: the queries are valid for Kibana deployments where `query:allowLeadingWildcards` is enabled, and administrators can disable it.
 

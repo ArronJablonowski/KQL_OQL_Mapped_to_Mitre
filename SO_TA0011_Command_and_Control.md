@@ -30,7 +30,7 @@
 
 ### Query 1
 ```kql
-event.category:process and process.name:("certutil.exe" or "bitsadmin.exe" or "curl.exe" or "wget.exe" or "powershell.exe" or "pwsh.exe") and process.command_line:("*http://*" or "*https://*" or "*ftp://*")
+event.category:process and process.name:("certutil.exe" or "bitsadmin.exe" or "curl.exe" or "wget.exe" or "powershell.exe" or "pwsh.exe") and process.command_line:(*http\://* or *https\://* or *ftp\://*)
 ```
 
 ### Query 2
@@ -55,26 +55,26 @@ event.category:network AND agent.type:"elastic-agent" AND host.os.type:(linux OR
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for Linux hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(curl or wget or python or python3 or perl or php) and process.command_line:("*/tmp/*" or "*/dev/shm/*" or "* -O *" or "* -o *" or "*http*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(curl or wget or python or python3 or perl or php) and process.command_line:(*/tmp/* or */dev/shm/* or *\ -O\ * or *\ -o\ * or *http*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(curl OR wget OR python OR python3 OR perl OR php) AND process.command_line:("*/tmp/*" OR "*/dev/shm/*" OR "* -O *" OR "* -o *" OR "*http*") | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(curl OR wget OR python OR python3 OR perl OR php) AND process.command_line:(*\/tmp\/* OR *\/dev\/shm\/* OR *\ \-O\ * OR *\ \-o\ * OR *http*) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port network.transport network.community_id event.code rule.name
 ```
 
 ### Query 5 — Security Onion macOS Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for macOS hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:macos and process.name:(curl or osascript or python or python3 or bash or zsh or sh) and process.command_line:("*http*" or "*/tmp/*" or "*/Users/Shared/*" or "* -o *" or "*do shell script*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:macos and process.name:(curl or osascript or python or python3 or bash or zsh or sh) and process.command_line:(*http* or */tmp/* or */Users/Shared/* or *\ -o\ * or *do\ shell\ script*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:macos AND process.name:(curl OR osascript OR python OR python3 OR bash OR zsh OR sh) AND process.command_line:("*http*" OR "*/tmp/*" OR "*/Users/Shared/*" OR "* -o *" OR "*do shell script*") | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:macos AND process.name:(curl OR osascript OR python OR python3 OR bash OR zsh OR sh) AND process.command_line:(*http* OR *\/tmp\/* OR *\/Users\/Shared\/* OR *\ \-o\ * OR *do\ shell\ script*) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port network.transport network.community_id event.code rule.name
 ```
 
 **Tuning ideas:** allowlist known admin scripts, software deployment tools, scanners, EDR activity, patch management, and sanctioned cloud apps before alerting.
@@ -94,7 +94,7 @@ event.category:network and process.name:("powershell.exe" or "pwsh.exe" or "msht
 
 ### Query 2
 ```kql
-event.category:process and process.command_line:("*http://*" or "*https://*") and process.name:("powershell.exe" or "pwsh.exe" or "cmd.exe" or "mshta.exe" or "regsvr32.exe")
+event.category:process and process.command_line:(*http\://* or *https\://*) and process.name:("powershell.exe" or "pwsh.exe" or "cmd.exe" or "mshta.exe" or "regsvr32.exe")
 ```
 
 **Tuning ideas:** allowlist known admin scripts, software deployment tools, scanners, EDR activity, patch management, and sanctioned cloud apps before alerting.
@@ -105,26 +105,26 @@ event.category:process and process.command_line:("*http://*" or "*https://*") an
 **Security Onion specific:** Uses Security Onion Zeek HTTP/SSL/DNS metadata for suspicious web C2 indicators.
 
 ```kql
-event.dataset:(http or ssl or dns) and (url.domain:("*.duckdns.org" or "*.ddns.net" or "*.ngrok.io" or "*.workers.dev") or tls.server.name:("*.duckdns.org" or "*.ddns.net" or "*.ngrok.io" or "*.workers.dev") or dns.question.name:("*.duckdns.org" or "*.ddns.net" or "*.ngrok.io" or "*.workers.dev"))
+event.dataset:(http or ssl or dns) and (url.domain:(*.duckdns.org or *.ddns.net or *.ngrok.io or *.workers.dev) or tls.server.name:(*.duckdns.org or *.ddns.net or *.ngrok.io or *.workers.dev) or dns.question.name:(*.duckdns.org or *.ddns.net or *.ngrok.io or *.workers.dev))
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.dataset:(http OR ssl OR dns) AND (url.domain:("*.duckdns.org" OR "*.ddns.net" OR "*.ngrok.io" OR "*.workers.dev") OR tls.server.name:("*.duckdns.org" OR "*.ddns.net" OR "*.ngrok.io" OR "*.workers.dev") OR dns.question.name:("*.duckdns.org" OR "*.ddns.net" OR "*.ngrok.io" OR "*.workers.dev")) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.dataset:(http OR ssl OR dns) AND (url.domain:(*.duckdns.org OR *.ddns.net OR *.ngrok.io OR *.workers.dev) OR tls.server.name:(*.duckdns.org OR *.ddns.net OR *.ngrok.io OR *.workers.dev) OR dns.question.name:(*.duckdns.org OR *.ddns.net OR *.ngrok.io OR *.workers.dev)) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 
 ### Query 4 — Security Onion
 **Security Onion specific:** Uses Security Onion Suricata alert data for HTTP/HTTPS C2 or malware callback signatures.
 
 ```kql
-event.module:"Suricata" and event.dataset:"alert" and rule.name:("*C2*" or "*CnC*" or "*Command and Control*" or "*Callback*" or "*Beacon*")
+event.module:"Suricata" and event.dataset:"alert" and rule.name:(*C2* or *CnC* or *Command\ and\ Control* or *Callback* or *Beacon*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.module:"Suricata" AND event.dataset:"alert" AND rule.name:("*C2*" OR "*CnC*" OR "*Command and Control*" OR "*Callback*" OR "*Beacon*") | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.module:"Suricata" AND event.dataset:"alert" AND rule.name:(*C2* OR *CnC* OR *Command\ and\ Control* OR *Callback* OR *Beacon*) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 
 ## T1090 — Proxy
@@ -135,7 +135,7 @@ event.module:"Suricata" AND event.dataset:"alert" AND rule.name:("*C2*" OR "*CnC
 
 ### Query 1
 ```kql
-event.category:process and process.command_line:("*socks*" or "*proxy*" or "*chisel*" or "*frp*" or "*ngrok*" or "*proxychains*" or "*ssh -D*")
+event.category:process and process.command_line:(*socks* or *proxy* or *chisel* or *frp* or *ngrok* or *proxychains* or *ssh\ -D*)
 ```
 
 ### Query 2
@@ -164,37 +164,37 @@ event.dataset:http AND http.request.method:(CONNECT OR POST) AND destination.por
 **Security Onion specific:** Uses Security Onion Suricata alert data for proxy, tunnel, or anonymizer signatures.
 
 ```kql
-event.module:"Suricata" and event.dataset:"alert" and rule.name:("*Proxy*" or "*SOCKS*" or "*Tor*" or "*Teredo*" or "*Tunnel*")
+event.module:"Suricata" and event.dataset:"alert" and rule.name:(*Proxy* or *SOCKS* or *Tor* or *Teredo* or *Tunnel*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.module:"Suricata" AND event.dataset:"alert" AND rule.name:("*Proxy*" OR "*SOCKS*" OR "*Tor*" OR "*Teredo*" OR "*Tunnel*") | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.module:"Suricata" AND event.dataset:"alert" AND rule.name:(*Proxy* OR *SOCKS* OR *Tor* OR *Teredo* OR *Tunnel*) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 ### Query 5 — Security Onion Linux Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for Linux hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(ssh or socat or chisel or ngrok or stunnel) and process.command_line:("* -D *" or "* -L *" or "* -R *" or "*socks*" or "*reverse*" or "*client*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(ssh or socat or chisel or ngrok or stunnel) and process.command_line:(*\ -D\ * or *\ -L\ * or *\ -R\ * or *socks* or *reverse* or *client*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(ssh OR socat OR chisel OR ngrok OR stunnel) AND process.command_line:("* -D *" OR "* -L *" OR "* -R *" OR "*socks*" OR "*reverse*" OR "*client*") | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(ssh OR socat OR chisel OR ngrok OR stunnel) AND process.command_line:(*\ \-D\ * OR *\ \-L\ * OR *\ \-R\ * OR *socks* OR *reverse* OR *client*) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
 ```
 ### Query 6 — Security Onion macOS Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for macOS hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:macos and process.name:(ssh or chisel or ngrok or stunnel) and process.command_line:("* -D *" or "* -L *" or "* -R *" or "*socks*" or "*reverse*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:macos and process.name:(ssh or chisel or ngrok or stunnel) and process.command_line:(*\ -D\ * or *\ -L\ * or *\ -R\ * or *socks* or *reverse*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:macos AND process.name:(ssh OR chisel OR ngrok OR stunnel) AND process.command_line:("* -D *" OR "* -L *" OR "* -R *" OR "*socks*" OR "*reverse*") | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:macos AND process.name:(ssh OR chisel OR ngrok OR stunnel) AND process.command_line:(*\ \-D\ * OR *\ \-L\ * OR *\ \-R\ * OR *socks* OR *reverse*) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
 ```
 
 ## T1572 — Protocol Tunneling
@@ -205,7 +205,7 @@ event.category:process AND agent.type:"elastic-agent" AND host.os.type:macos AND
 
 ### Query 1
 ```kql
-event.category:process and process.command_line:("*ssh -L*" or "*ssh -R*" or "*ssh -D*" or "*plink* -L*" or "*plink* -R*" or "*chisel*" or "*stunnel*")
+event.category:process and process.command_line:(*ssh\ -L* or *ssh\ -R* or *ssh\ -D* or *plink*\ -L* or *plink*\ -R* or *chisel* or *stunnel*)
 ```
 
 ### Query 2
@@ -234,25 +234,25 @@ event.dataset:conn AND destination.port:(22 OR 443 OR 1194 OR 1701 OR 1723 OR 50
 **Security Onion specific:** Uses Security Onion Suricata alert data for VPN, tunnel, and encapsulation signatures.
 
 ```kql
-event.module:"Suricata" and event.dataset:"alert" and rule.name:("*Tunnel*" or "*VPN*" or "*OpenVPN*" or "*WireGuard*" or "*GRE*" or "*IPsec*")
+event.module:"Suricata" and event.dataset:"alert" and rule.name:(*Tunnel* or *VPN* or *OpenVPN* or *WireGuard* or *GRE* or *IPsec*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.module:"Suricata" AND event.dataset:"alert" AND rule.name:("*Tunnel*" OR "*VPN*" OR "*OpenVPN*" OR "*WireGuard*" OR "*GRE*" OR "*IPsec*") | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.module:"Suricata" AND event.dataset:"alert" AND rule.name:(*Tunnel* OR *VPN* OR *OpenVPN* OR *WireGuard* OR *GRE* OR *IPsec*) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 ### Query 5 — Security Onion Linux Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for Linux hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(ssh or chisel or stunnel or openvpn or wg or wireguard-go) and process.command_line:("*tun*" or "*tap*" or "*socks*" or "*reverse*" or "*client*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:linux and process.name:(ssh or chisel or stunnel or openvpn or wg or wireguard-go) and process.command_line:(*tun* or *tap* or *socks* or *reverse* or *client*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(ssh OR chisel OR stunnel OR openvpn OR wg OR wireguard-go) AND process.command_line:("*tun*" OR "*tap*" OR "*socks*" OR "*reverse*" OR "*client*") | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:linux AND process.name:(ssh OR chisel OR stunnel OR openvpn OR wg OR wireguard-go) AND process.command_line:(*tun* OR *tap* OR *socks* OR *reverse* OR *client*) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
 ```
 
 ## T1095 — Non-Application Layer Protocol
@@ -268,7 +268,7 @@ event.category:network and network.protocol:(icmp or tcp or udp) and process.nam
 
 ### Query 2
 ```kql
-event.category:process and process.command_line:("*Test-Connection*" or "*System.Net.Sockets.TcpClient*" or "*nc.exe*" or "*ncat*" or "*ping -t*")
+event.category:process and process.command_line:(*Test-Connection* or *System.Net.Sockets.TcpClient* or *nc.exe* or *ncat* or *ping\ -t*)
 ```
 
 **Tuning ideas:** allowlist known admin scripts, software deployment tools, scanners, EDR activity, patch management, and sanctioned cloud apps before alerting.
@@ -299,50 +299,50 @@ event.category:network and process.name:("anydesk.exe" or "teamviewer.exe" or "r
 **Security Onion specific:** Uses Security Onion Zeek SSL/DNS metadata for common remote-access tool infrastructure.
 
 ```kql
-event.dataset:(dns or ssl) and (dns.question.name:("*anydesk*" or "*teamviewer*" or "*screenconnect*" or "*rustdesk*" or "*logmein*") or tls.server.name:("*anydesk*" or "*teamviewer*" or "*screenconnect*" or "*rustdesk*" or "*logmein*"))
+event.dataset:(dns or ssl) and (dns.question.name:(*anydesk* or *teamviewer* or *screenconnect* or *rustdesk* or *logmein*) or tls.server.name:(*anydesk* or *teamviewer* or *screenconnect* or *rustdesk* or *logmein*))
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.dataset:(dns OR ssl) AND (dns.question.name:("*anydesk*" OR "*teamviewer*" OR "*screenconnect*" OR "*rustdesk*" OR "*logmein*") OR tls.server.name:("*anydesk*" OR "*teamviewer*" OR "*screenconnect*" OR "*rustdesk*" OR "*logmein*")) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.dataset:(dns OR ssl) AND (dns.question.name:(*anydesk* OR *teamviewer* OR *screenconnect* OR *rustdesk* OR *logmein*) OR tls.server.name:(*anydesk* OR *teamviewer* OR *screenconnect* OR *rustdesk* OR *logmein*)) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 
 ### Query 4 — Security Onion
 **Security Onion specific:** Uses Security Onion Suricata alert data for remote access software signatures.
 
 ```kql
-event.module:"Suricata" and event.dataset:"alert" and rule.name:("*AnyDesk*" or "*TeamViewer*" or "*ScreenConnect*" or "*RustDesk*" or "*LogMeIn*")
+event.module:"Suricata" and event.dataset:"alert" and rule.name:(*AnyDesk* or *TeamViewer* or *ScreenConnect* or *RustDesk* or *LogMeIn*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** Uses Security Onion 3.1 Hunt syntax. The filter uses Lucene/OQL boolean operators and adds Hunt-friendly grouping, sorting, and event-table columns.
 
 ```oql
-event.module:"Suricata" AND event.dataset:"alert" AND rule.name:("*AnyDesk*" OR "*TeamViewer*" OR "*ScreenConnect*" OR "*RustDesk*" OR "*LogMeIn*") | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
+event.module:"Suricata" AND event.dataset:"alert" AND rule.name:(*AnyDesk* OR *TeamViewer* OR *ScreenConnect* OR *RustDesk* OR *LogMeIn*) | groupby event.dataset source.ip destination.ip destination.port rule.name | sortby @timestamp | table event.module event.dataset source.ip source.port destination.ip destination.port network.transport network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method file.name file.path host.name user.name event.code event.action
 ```
 ### Query 5 — Security Onion Windows Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for Windows hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:(process or network) and agent.type:"elastic-agent" and host.os.type:windows and (process.name:("anydesk.exe" or "teamviewer.exe" or "rustdesk.exe" or "screenconnect.clientservice.exe" or "logmein.exe") or destination.domain:("*anydesk*" or "*teamviewer*" or "*rustdesk*" or "*screenconnect*"))
+event.category:(process or network) and agent.type:"elastic-agent" and host.os.type:windows and (process.name:("anydesk.exe" or "teamviewer.exe" or "rustdesk.exe" or "screenconnect.clientservice.exe" or "logmein.exe") or destination.domain:(*anydesk* or *teamviewer* or *rustdesk* or *screenconnect*))
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:(process OR network) AND agent.type:"elastic-agent" AND host.os.type:windows AND (process.name:("anydesk.exe" OR "teamviewer.exe" OR "rustdesk.exe" OR "screenconnect.clientservice.exe" OR "logmein.exe") OR destination.domain:("*anydesk*" OR "*teamviewer*" OR "*rustdesk*" OR "*screenconnect*")) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
+event.category:(process OR network) AND agent.type:"elastic-agent" AND host.os.type:windows AND (process.name:("anydesk.exe" OR "teamviewer.exe" OR "rustdesk.exe" OR "screenconnect.clientservice.exe" OR "logmein.exe") OR destination.domain:(*anydesk* OR *teamviewer* OR *rustdesk* OR *screenconnect*)) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
 ```
 ### Query 6 — Security Onion macOS Elastic Agent
 **Security Onion specific:** Uses Elastic Agent telemetry in Security Onion 3.1.0 for macOS hosts. Requires Elastic Agent endpoint, system, Windows, macOS, Linux, or Elastic Defend data streams with ECS host, process, file, registry, authentication, or network fields.
 
 ```kql
-event.category:(process or network) and agent.type:"elastic-agent" and host.os.type:macos and (process.name:(AnyDesk or TeamViewer or RustDesk or ScreenConnect) or destination.domain:("*anydesk*" or "*teamviewer*" or "*rustdesk*" or "*screenconnect*"))
+event.category:(process or network) and agent.type:"elastic-agent" and host.os.type:macos and (process.name:(AnyDesk or TeamViewer or RustDesk or ScreenConnect) or destination.domain:(*anydesk* or *teamviewer* or *rustdesk* or *screenconnect*))
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:(process OR network) AND agent.type:"elastic-agent" AND host.os.type:macos AND (process.name:(AnyDesk OR TeamViewer OR RustDesk OR ScreenConnect) OR destination.domain:("*anydesk*" OR "*teamviewer*" OR "*rustdesk*" OR "*screenconnect*")) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
+event.category:(process OR network) AND agent.type:"elastic-agent" AND host.os.type:macos AND (process.name:(AnyDesk OR TeamViewer OR RustDesk OR ScreenConnect) OR destination.domain:(*anydesk* OR *teamviewer* OR *rustdesk* OR *screenconnect*)) | groupby host.name host.os.type user.name process.name process.parent.name destination.ip destination.port event.action | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport event.code rule.name
 ```
 
 ---
@@ -404,37 +404,37 @@ event.category:network AND agent.type:"elastic-agent" AND destination.ip:* AND (
 **Security Onion specific:** Uses Elastic Agent or Security Onion network telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.name:("powershell.exe" or "pwsh.exe" or "certutil.exe" or "cmd.exe") and process.command_line:("*-EncodedCommand*" or "*FromBase64String*" or "*ToBase64String*" or "*certutil* -decode*" or "*certutil* -encode*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.name:("powershell.exe" or "pwsh.exe" or "certutil.exe" or "cmd.exe") and process.command_line:(*-EncodedCommand* or *FromBase64String* or *ToBase64String* or *certutil*\ -decode* or *certutil*\ -encode*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.name:("powershell.exe" OR "pwsh.exe" OR "certutil.exe" OR "cmd.exe") AND process.command_line:("*-EncodedCommand*" OR "*FromBase64String*" OR "*ToBase64String*" OR "*certutil* -decode*" OR "*certutil* -encode*") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.name:("powershell.exe" OR "pwsh.exe" OR "certutil.exe" OR "cmd.exe") AND process.command_line:(*\-EncodedCommand* OR *FromBase64String* OR *ToBase64String* OR *certutil*\ \-decode* OR *certutil*\ \-encode*) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
 ```
 ### Query 2 — Security Onion Linux/macOS Elastic Agent
 **Security Onion specific:** Uses Elastic Agent or Security Onion network telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:(linux or macos) and process.name:(base64 or openssl or python or python3 or perl or ruby) and process.command_line:("*base64*" or "*-d*" or "*decode*" or "*encode*" or "*b64decode*" or "*b64encode*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:(linux or macos) and process.name:(base64 or openssl or python or python3 or perl or ruby) and process.command_line:(*base64* or *-d* or *decode* or *encode* or *b64decode* or *b64encode*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:(linux OR macos) AND process.name:(base64 OR openssl OR python OR python3 OR perl OR ruby) AND process.command_line:("*base64*" OR "*-d*" OR "*decode*" OR "*encode*" OR "*b64decode*" OR "*b64encode*") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:(linux OR macos) AND process.name:(base64 OR openssl OR python OR python3 OR perl OR ruby) AND process.command_line:(*base64* OR *\-d* OR *decode* OR *encode* OR *b64decode* OR *b64encode*) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
 ```
 ### Query 3 — Security Onion Zeek/Security Onion Network
 **Security Onion specific:** Uses Elastic Agent or Security Onion network telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:(dns or http) and (dns.question.name:("*==*" or "*-*-*-*" or "*[0-9a-f][0-9a-f][0-9a-f]*") or url.query:("*==*" or "*base64*" or "*b64*" or "*%3D%3D*") or http.request.body.content:("*==*" or "*base64*" or "*b64*"))
+event.dataset:(dns or http) and (dns.question.name:(*==* or *-*-*-*) or url.query:(*==* or *base64* or *b64* or *%3D%3D*) or http.request.body.content:(*==* or *base64* or *b64*))
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:(dns OR http) AND (dns.question.name:("*==*" OR "*-*-*-*" OR "*[0-9a-f][0-9a-f][0-9a-f]*") OR url.query:("*==*" OR "*base64*" OR "*b64*" OR "*%3D%3D*") OR http.request.body.content:("*==*" OR "*base64*" OR "*b64*")) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:(dns OR http) AND (dns.question.name:(*==* OR *\-*\-*\-*) OR url.query:(*==* OR *base64* OR *b64* OR *%3D%3D*) OR http.request.body.content:(*==* OR *base64* OR *b64*)) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 
 **Tuning ideas:** allowlist known administrators, software deployment tools, EDR activity, inventory systems, vulnerability scanners, patching tools, and sanctioned management workflows before alerting.
@@ -463,13 +463,13 @@ event.dataset:dns AND dns.question.type:(TXT OR NULL OR CNAME) AND source.ip:* A
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:dns and dns.question.name:("*.duckdns.org" or "*.ddns.net" or "*.no-ip.org" or "*.dynu.net" or "*.hopto.org") and source.ip:*
+event.dataset:dns and dns.question.name:(*.duckdns.org or *.ddns.net or *.no-ip.org or *.dynu.net or *.hopto.org) and source.ip:*
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:dns AND dns.question.name:("*.duckdns.org" OR "*.ddns.net" OR "*.no-ip.org" OR "*.dynu.net" OR "*.hopto.org") AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:dns AND dns.question.name:(*.duckdns.org OR *.ddns.net OR *.no\-ip.org OR *.dynu.net OR *.hopto.org) AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 
 **Tuning ideas:** allowlist known administrators, software deployment tools, EDR activity, backup agents, inventory systems, vulnerability scanners, patching tools, and sanctioned management workflows before alerting.
@@ -486,13 +486,13 @@ event.dataset:dns AND dns.question.name:("*.duckdns.org" OR "*.ddns.net" OR "*.n
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:dns and dns.answers.data:* and dns.question.name:("*.duckdns.org" or "*.ddns.net" or "*.no-ip.org" or "*.dynu.net")
+event.dataset:dns and dns.answers.data:* and dns.question.name:(*.duckdns.org or *.ddns.net or *.no-ip.org or *.dynu.net)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:dns AND dns.answers.data:* AND dns.question.name:("*.duckdns.org" OR "*.ddns.net" OR "*.no-ip.org" OR "*.dynu.net") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:dns AND dns.answers.data:* AND dns.question.name:(*.duckdns.org OR *.ddns.net OR *.no\-ip.org OR *.dynu.net) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 ### Query 2 — Security Onion Zeek/Security Onion Network
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
@@ -521,25 +521,25 @@ event.dataset:dns AND dns.question.name:* AND dns.answers.data:* AND source.ip:*
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:dns and dns.question.name:("*.top" or "*.xyz" or "*.club" or "*.icu" or "*.monster" or "*.click") and source.ip:*
+event.dataset:dns and dns.question.name:(*.top or *.xyz or *.club or *.icu or *.monster or *.click) and source.ip:*
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:dns AND dns.question.name:("*.top" OR "*.xyz" OR "*.club" OR "*.icu" OR "*.monster" OR "*.click") AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:dns AND dns.question.name:(*.top OR *.xyz OR *.club OR *.icu OR *.monster OR *.click) AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 ### Query 2 — Security Onion Zeek/Security Onion Network
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:dns and dns.question.name:("*0*1*2*" or "*q* x*" or "*z* q*" or "*j* k*") and source.ip:*
+event.dataset:dns and dns.question.name:(*0*1*2* or *q*\ x* or *z*\ q* or *j*\ k*) and source.ip:*
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:dns AND dns.question.name:("*0*1*2*" OR "*q* x*" OR "*z* q*" OR "*j* k*") AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:dns AND dns.question.name:(*0*1*2* OR *q*\ x* OR *z*\ q* OR *j*\ k*) AND source.ip:* | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 
 **Tuning ideas:** allowlist known administrators, software deployment tools, EDR activity, backup agents, inventory systems, vulnerability scanners, patching tools, and sanctioned management workflows before alerting.
@@ -556,25 +556,25 @@ event.dataset:dns AND dns.question.name:("*0*1*2*" OR "*q* x*" OR "*z* q*" OR "*
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.command_line:("*FromBase64String*" or "*ToBase64String*" or "*-EncodedCommand*" or "*certutil* -decode*" or "*base64*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.command_line:(*FromBase64String* or *ToBase64String* or *-EncodedCommand* or *certutil*\ -decode* or *base64*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.command_line:("*FromBase64String*" OR "*ToBase64String*" OR "*-EncodedCommand*" OR "*certutil* -decode*" OR "*base64*") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.command_line:(*FromBase64String* OR *ToBase64String* OR *\-EncodedCommand* OR *certutil*\ \-decode* OR *base64*) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
 ```
 ### Query 2 — Security Onion Zeek/Security Onion Network
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.dataset:(http or dns) and (url.query:("*%3D%3D*" or "*base64*" or "*b64*") or dns.question.name:("*==*" or "*base64*"))
+event.dataset:(http or dns) and (url.query:(*%3D%3D* or *base64* or *b64*) or dns.question.name:(*==* or *base64*))
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.dataset:(http OR dns) AND (url.query:("*%3D%3D*" OR "*base64*" OR "*b64*") OR dns.question.name:("*==*" OR "*base64*")) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
+event.dataset:(http OR dns) AND (url.query:(*%3D%3D* OR *base64* OR *b64*) OR dns.question.name:(*==* OR *base64*)) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.module event.dataset source.ip source.port destination.ip destination.port destination.domain network.transport network.protocol network.community_id log.id.uid rule.name dns.question.name url.domain tls.server.name http.request.method http.request.body.content file.name file.path host.name user.name process.name event.code event.action
 ```
 
 **Tuning ideas:** allowlist known administrators, software deployment tools, EDR activity, backup agents, inventory systems, vulnerability scanners, patching tools, and sanctioned management workflows before alerting.
@@ -591,26 +591,25 @@ event.dataset:(http OR dns) AND (url.query:("*%3D%3D*" OR "*base64*" OR "*b64*")
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:(linux or macos) and process.name:(python or python3 or perl or ruby or openssl) and process.command_line:("*xor*" or "*rot13*" or "*bytearray*" or "*hexlify*" or "*unhexlify*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:(linux or macos) and process.name:(python or python3 or perl or ruby or openssl) and process.command_line:(*xor* or *rot13* or *bytearray* or *hexlify* or *unhexlify*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:(linux OR macos) AND process.name:(python OR python3 OR perl OR ruby OR openssl) AND process.command_line:("*xor*" OR "*rot13*" OR "*bytearray*" OR "*hexlify*" OR "*unhexlify*") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:(linux OR macos) AND process.name:(python OR python3 OR perl OR ruby OR openssl) AND process.command_line:(*xor* OR *rot13* OR *bytearray* OR *hexlify* OR *unhexlify*) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
 ```
 ### Query 2 — Security Onion Windows Elastic Agent
 **Security Onion specific:** Uses Elastic Agent or Security Onion telemetry in Security Onion 3.1.0. Requires the relevant endpoint, Zeek, Suricata, cloud, SaaS, Windows, Linux, macOS, system, or Elastic Defend data streams with ECS-compatible fields.
 
 ```kql
-event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.name:("powershell.exe" or "pwsh.exe" or "python.exe") and process.command_line:("*bxor*" or "*ToCharArray*" or "*[convert]::ToString*" or "*FromHexString*" or "*rot13*")
+event.category:process and agent.type:"elastic-agent" and host.os.type:windows and process.name:("powershell.exe" or "pwsh.exe" or "python.exe") and process.command_line:(*bxor* or *ToCharArray* or *convert*ToString* or *FromHexString* or *rot13*)
 ```
 
 **Security Onion Hunt dashboard (OQL):** OQL version for Security Onion 3.1.0 Hunt using Lucene-style boolean operators plus Hunt-friendly grouping, sorting, and table columns.
 
 ```oql
-event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.name:("powershell.exe" OR "pwsh.exe" OR "python.exe") AND process.command_line:("*bxor*" OR "*ToCharArray*" OR "*[convert]::ToString*" OR "*FromHexString*" OR "*rot13*") | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
+event.category:process AND agent.type:"elastic-agent" AND host.os.type:windows AND process.name:("powershell.exe" OR "pwsh.exe" OR "python.exe") AND process.command_line:(*bxor* OR *ToCharArray* OR *convert*ToString* OR *FromHexString* OR *rot13*) | groupby host.name host.os.type user.name process.name process.parent.name event.action destination.ip destination.port | sortby @timestamp | table @timestamp event.category event.action event.dataset agent.type host.name host.os.type user.name process.name process.parent.name process.command_line process.executable file.path file.name file.extension registry.path registry.value source.ip source.port destination.ip destination.port destination.domain network.transport network.community_id event.code rule.name
 ```
 
 **Tuning ideas:** allowlist known administrators, software deployment tools, EDR activity, backup agents, inventory systems, vulnerability scanners, patching tools, and sanctioned management workflows before alerting.
-

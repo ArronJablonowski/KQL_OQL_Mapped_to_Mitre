@@ -20,13 +20,14 @@ MITRE ATT&CK Enterprise coverage mapped to hunting-grade Elastic Kibana Query La
 ## KQL Quick Reference
 
 - Exact value: `field.name:"exact value"`
-- Multiple values: `field.name:("value1" or "value2" or "wildcard*")`
+- Multiple values: `field.name:("value1" or "value2" or wildcard*)`
 - Exists: `field.name:*`
 - Boolean logic: `and`, `or`, `not`
-- Leading wildcard hunts such as `process.command_line:"*EncodedCommand*"` depend on Kibana's `query:allowLeadingWildcards` advanced setting. Verify it is enabled in the target Kibana space; if disabled, rewrite leading wildcard clauses as prefix, exact-match, normalized-field, or rule-exception logic.
+- Wildcard hunts should use unquoted wildcard terms, for example `process.command_line:*EncodedCommand*`. Escape spaces and special characters inside wildcard terms, for example `rule.name:*Command\ and\ Control*` or `process.command_line:*jndi\:*`.
+- Leading wildcard hunts such as `process.command_line:*EncodedCommand*` depend on Kibana's `query:allowLeadingWildcards` advanced setting. Verify it is enabled in the target Kibana space; if disabled, rewrite leading wildcard clauses as prefix, exact-match, normalized-field, or rule-exception logic.
 - Elastic's KQL language reference says leading wildcards are disallowed by default for performance reasons, while the current Kibana advanced settings reference lists `query:allowLeadingWildcards` as a boolean setting with default `true`. Treat leading wildcard support as an environment compatibility setting.
 - To check this in Security Onion, open **Security Onion Console**, go to **Kibana**, then open **Stack Management** -> **Advanced Settings**. Search for `query:allowLeadingWildcards` and confirm **Allow leading wildcards in query** is enabled. In Kibana, this is a **Space Settings** value, so verify it in each Kibana space where these KQL queries will be used.
-- Windows paths in quoted patterns: escape literal backslashes, for example `file.path:"C:\\Windows\\System32\\Tasks\\*"`
+- Windows path wildcard hunts should use unquoted wildcard terms with escaped special characters, for example `file.path:C\:\\Windows\\System32\\Tasks\\*`
 - Set time ranges in the Kibana UI, or use date math such as `@timestamp >= now-24h` where supported.
 
 ## Security Onion Hunt OQL Quick Reference
@@ -34,7 +35,7 @@ MITRE ATT&CK Enterprise coverage mapped to hunting-grade Elastic Kibana Query La
 - Official docs: [Security Onion Dashboards/OQL documentation](https://docs.securityonion.net/en/3/main/dashboards/)
 - Boolean logic: `AND`, `OR`, `NOT`
 - Exact value: `field.name:"exact value"`
-- Multiple values: `field.name:("value1" OR "value2" OR "wildcard*")`
+- Multiple values: `field.name:("value1" OR "value2" OR wildcard*)`
 - Exists: `field.name:*`
 - Aggregation: `| groupby source.ip destination.ip destination.port`
 - Sorting: `| sortby @timestamp`
